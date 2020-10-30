@@ -64,6 +64,6 @@ fn main() {
             short.choose(&mut rng).unwrap()
         };
         let sleep_time = show_habit(habit);
-        thread::sleep(time::Duration::from_secs(sleep_time.into()))
+        thread::sleep(time::Duration::from_secs((sleep_time * 60).into()))
     }
 }
