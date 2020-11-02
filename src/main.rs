@@ -33,7 +33,9 @@ fn play_notification_sound(handle: &rodio::OutputStreamHandle) {
     let file = std::fs::File::open("/usr/share/sounds/freedesktop/stereo/message.oga").unwrap();
 
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
-    handle.play_raw(source.convert_samples()).unwrap();
+    handle
+        .play_raw(source.amplify(3.0).convert_samples())
+        .unwrap();
 }
 
 fn main() {
