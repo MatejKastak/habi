@@ -30,11 +30,12 @@ fn show_habit(handle: &rodio::OutputStreamHandle, habit: &str) -> u32 {
 }
 
 fn play_notification_sound(handle: &rodio::OutputStreamHandle) {
-    let file = std::fs::File::open("/usr/share/sounds/freedesktop/stereo/message.oga").unwrap();
+    let file =
+        std::fs::File::open("/usr/share/sounds/freedesktop/stereo/window-attention.oga").unwrap();
 
     let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
     handle
-        .play_raw(source.amplify(3.0).convert_samples())
+        .play_raw(source.amplify(1.5).convert_samples())
         .unwrap();
 }
 
