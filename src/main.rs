@@ -1,18 +1,15 @@
- #[macro_use]
+#[macro_use]
 extern crate log;
 
 use notify_rust::Notification;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
-use rand::Rng;
 use rodio::Source;
 use std::io::BufReader;
 use std::{thread, time};
 
-fn show_habit(handle: &rodio::OutputStreamHandle, habit: &str) -> u32 {
-    let mut sleep_time = 0;
-
-    play_notification_sound(handle);
+fn show_habit(habit: &str) {
+    // play_notification_sound(handle);
 
     debug!("Show the notification");
 
@@ -20,20 +17,10 @@ fn show_habit(handle: &rodio::OutputStreamHandle, habit: &str) -> u32 {
         .summary(habit)
         .body("habi")
         .icon("firefox")
-        .action("default", "default")
         .show()
-        .unwrap()
-        .wait_for_action(|action| match action {
-            // left click
-            "default" => sleep_time = 10,
-            // right click
-            "__closed" => sleep_time = 0,
-            _ => sleep_time = 0,
-        });
+        .unwrap();
 
     debug!("Notification returned");
-
-    return sleep_time;
 }
 
 fn play_notification_sound(handle: &rodio::OutputStreamHandle) {
@@ -51,6 +38,7 @@ fn play_notification_sound(handle: &rodio::OutputStreamHandle) {
     debug!("Playing the sound... DONE");
 }
 
+// TODO: Specify the `sleep_time` from command line
 fn main() {
     env_logger::init();
 
@@ -61,29 +49,11 @@ fn main() {
         "Head exercises",
         "Chin tucks",
         "Stretches",
-        "Wall stand",
-        "Wall exercises",
-        "Grease the groove",
-        "Push-ups",
-        "Squads",
-        "Plank",
-        "L-sit",
-        "Wash the face",
         "Hand exercises",
         "Drink water",
-        "Eye exercises",
         "Look into distance",
         "Moving the eyes",
         "Eye blinking",
-        "Typing practice",
-    ];
-
-    let long = vec![
-        "Breathing exercise",
-        "Workout",
-        "Meditation",
-        "Read the book",
-        "Walk",
     ];
 
     debug!("Initialized data vectors");
@@ -97,16 +67,15 @@ fn main() {
     debug!("Intialized rng");
 
     debug!("Starting main execution loop");
+
+    // Sleep time between habits in minutes
+    let sleep_time: u32 = 4;
+
     loop {
         debug!("Generate random habit");
-        // 1 in 5 to choose long
-        let habit = if rng.gen_range(0, 5) == 0 {
-            long.choose(&mut rng).unwrap()
-        } else {
-            short.choose(&mut rng).unwrap()
-        };
+        let habit = short.choose(&mut rng).unwrap();
         debug!("Got habit '{}'", habit);
-        let sleep_time = show_habit(&handle, habit);
+        show_habit(habit);
         debug!("Displayed habit, now sleeping for '{}' minutes", sleep_time);
         thread::sleep(time::Duration::from_secs((sleep_time * 60).into()))
     }
